@@ -1,0 +1,53 @@
+﻿@using Microsoft.Extensions.Localization
+@using System.Text.Json
+@inject IStringLocalizer<Lang> Localizer
+
+
+
+<link rel="stylesheet" href="~/css/FormForAdmin.css" asp-append-version="true" />
+<title>@Localizer["AdminPanel"]</title>
+@if (ViewBag.LoginError != null)
+{
+    <div class="popup-message error">@Localizer["UserIsAlreydeRegistered"]</div>
+}
+@if (ViewBag.IsRegistered != null)
+{
+    <div class="popup-message success">@Localizer["UserIsSuccessfullyRegistered"]</div>
+}
+@if (ViewBag.AuthorizationError != null)
+{
+    <div class="popup-message error">@Localizer["IncorrectInputForAuthorization"]</div>
+}
+
+<div class="admin-wrapper">
+
+
+    <div class="admin-container">
+        <h2>@Localizer["AdminPanel"]</h2>
+
+        <form method="post" asp-controller="Admin" asp-action="Login">
+            <div class="mb-3">
+
+                @* в этом инпуте сделать проверку на ввод только по почте *@
+                <label for="username" class="form-label">@Localizer["Login"]</label>
+                <input type="email" class="form-control" id="username" name="username" required />
+
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">@Localizer["Password"]</label>
+                <input type="password" class="form-control" id="password" name="password" required />
+            </div>
+            <button type="submit" name="actionType" value="login" class="btn btn-primary">@Localizer["Enter"]</button>
+            <a asp-controller="Admin" asp-action="RegistrationForm" class="btn btn-primary-1 link-button">@Localizer["Registration"]</a>
+        </form>
+
+        @* <form method="post" asp-controller="Admin" asp-action="RegistrationForm">
+
+            <button type="submit" name="actionType" value="registr" class="btn btn-primary-1">@Localizer["Registration"]</button>
+        </form> *@
+    </div>
+</div>
+
+@* @section Scripts {
+    <script src="~/js/form-validation.js" asp-append-version="true"></script>
+} *@

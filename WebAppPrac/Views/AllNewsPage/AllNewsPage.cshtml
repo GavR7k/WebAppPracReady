@@ -1,0 +1,80 @@
+﻿@using System.Globalization
+@using Microsoft.Extensions.Localization
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<WebAppPrac.Models.Article>
+@inject IStringLocalizer<Lang> Localizer
+
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/css/FormForAdmin.css" asp-append-version="true" />
+    <title>@Localizer["AllNews"]</title>
+
+    @if (TempData["ArticleSuccessMessage"] != null)
+    {
+        <div class="popup-message success">@TempData["ArticleSuccessMessage"]</div>
+    }
+    @if (TempData["ArticleNoDeleted"] != null)
+    {
+        <div class="popup-message error">@TempData["ArticleNoDeleted"]</div>
+    }
+    @if (TempData["ArticleSuccessDeleted"] != null)
+    {
+        <div class="popup-message success">@TempData["ArticleSuccessDeleted"]</div>
+    }
+</head>
+<body>
+
+    <div>
+        @foreach (var article in Model)
+        {
+            <div class="article-preview">
+                <h3>@article.Headline</h3>
+
+                @if (article.ImageData != null)
+                {
+                    var base64 = Convert.ToBase64String(article.ImageData);
+                    <img src="data:image/jpeg;base64,@base64" alt="Article Image" class="preview-image" />
+                }
+
+                <h6><strong>@article.Subtitle</strong></h6>
+                <p>@article.Text</p>
+
+
+                <div class="article-actions">
+
+                    @if (Context.Session.GetString("IsAdmin") == "true")
+                    {
+                        <a asp-controller="Article" asp-action="EditArticle" asp-route-id="@article.Id" class="but123">@Localizer["ChangeArticle"]</a>
+                        <a asp-controller="Article" asp-action="DeleteArticle" asp-route-id="@article.Id" class="but123">@Localizer["DeleteArticle"]</a>
+                    }
+                    @* <a asp-controller="Article" asp-action="ViewArticle" asp-route-id="@article.Id" class="but123">@Localizer["OpenArticle"]</a> *@
+                </div>
+
+            </div>
+        }
+    </div>
+
+    <div class="pagination-wrapper">
+        @Html.PagedListPager(Model, page => Url.Action("ShowAllNews", new { pageNumber = page }),
+        new PagedListRenderOptions
+        {
+            UlElementClasses = new[] { "pagination", "justify-content-center", "mt-4" },
+            LiElementClasses = new[] { "page-item" },
+            PageClasses = new[] { "page-link" },
+
+            //DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+            //DisplayLinkToLastPage = PagedListDisplayMode.Always,
+            //DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            //DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            DisplayLinkToIndividualPages = true,
+            MaximumPageNumbersToDisplay = 4
+        })
+    </div>
+
+
+</body>
+</html>

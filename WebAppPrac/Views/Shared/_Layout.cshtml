@@ -1,0 +1,60 @@
+﻿@using System.Globalization
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Lang> Localizer
+
+
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @* <title>@ViewData["Title"] - WebAppPrac</title> *@
+    <link rel="stylesheet" href="~/css/Layout.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="main-header">
+        <nav class="nav-bar">
+            <ul class="nav-list">
+
+                @if (Context.Session.GetString("IsAdmin") == "true")
+                {
+                    <li><a asp-controller="Article" asp-action="ShowFormForCreatingArticle">@Localizer["CreateArticle"]</a></li>
+                }
+                <li><a asp-controller="MainPage" asp-action="ShowMainPage">@Localizer["MainPage"]</a></li>
+                <li><a asp-controller="AllNewsPage" asp-action="ShowAllNews">@Localizer["AllNews"]</a></li>
+                <li><a asp-controller="Admin" asp-action="ShowFormForAdmin">@Localizer["AdminPanel"]</a></li>
+                <li>
+                    @* <form method="post" asp-controller="Culture" asp-action="SetCulture" class="lang-form">
+                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                        <button type="submit" name="culture" value="ru" class="@(CultureInfo.CurrentUICulture.Name == "ru" ? "active" : "")">RU</button>
+                        <button type="submit" name="culture" value="en" class="@(CultureInfo.CurrentUICulture.Name == "en" ? "active" : "")">EN</button>
+                    </form> *@
+                    <a asp-controller="Culture" asp-action="SetCulture" asp-route-culture="ru" asp-route-returnUrl="@Context.Request.Path"
+                       class="@(CultureInfo.CurrentUICulture.Name == "ru" ? "active" : "")">RU</a>
+                    <a asp-controller="Culture" asp-action="SetCulture" asp-route-culture="en" asp-route-returnUrl="@Context.Request.Path"
+                       class="@(CultureInfo.CurrentUICulture.Name == "en" ? "active" : "")">EN</a>
+                </li>
+                @if (Context.Session.GetString("IsAdmin") == "true")
+                {
+                    <li>
+                        <span class="admin-status">@Localizer["AdminMode"]</span>
+                    </li>
+                }
+
+
+            </ul>
+        </nav>
+    </header>
+
+
+    <main class="main-content">
+        @RenderBody()
+    </main>
+
+    <footer class="main-footer">
+        &copy; 2025 - WebAppPrac
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

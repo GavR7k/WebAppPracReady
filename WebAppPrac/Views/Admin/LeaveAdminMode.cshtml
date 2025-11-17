@@ -1,0 +1,19 @@
+﻿@using Microsoft.Extensions.Localization
+@using System.Text.Json
+@inject IStringLocalizer<Lang> Localizer
+
+
+<link rel="stylesheet" href="~/css/FormForAdmin.css" asp-append-version="true" />
+<title>@Localizer["AdminPanel"]</title>
+<div class="admin-wrapper">
+    <div class="admin-container">
+        <h2>@Localizer["AdminPanel"]</h2>
+        <form method="post" asp-controller="Admin" asp-action="UnLogin">
+            
+            <button type="submit" class="btn btn-primary">@Localizer["UnLog"]</button>
+        </form>
+
+    </div>
+
+</div>
+

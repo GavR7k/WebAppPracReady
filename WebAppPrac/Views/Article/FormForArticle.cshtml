@@ -1,0 +1,50 @@
+﻿@using Microsoft.Extensions.Localization
+@using System.Text.Json
+@model WebAppPrac.Models.Article
+@inject IStringLocalizer<Lang> Localizer
+
+<link rel="stylesheet" href="~/css/FormForAdmin.css" asp-append-version="true" />
+
+<title>@Localizer["CreateArticle"]</title>
+@if (ViewBag.ArticleError != null)
+{
+    <div class="popup-message error">@Localizer["UseCorrectFormOfLanguage"]</div>
+}
+<div class="admin-wrapper">
+
+    <div class="admin-container">
+        <h2>@Localizer["CreateArticle"]</h2>
+
+        <form method="post" enctype="multipart/form-data" asp-controller="Article" asp-action="CreateArticle">
+            <div class="mb-3">
+
+                <label for="headline" class="form-label">@Localizer["Headline"]</label>
+                <input type="text" asp-for="Headline" class="form-control" name="headline" id="headline" required />
+
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">@Localizer["Image"]</label>
+                <input type="file" class="form-control-1" id="image" accept="image/*" name="image" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="subtitle" class="form-label">@Localizer["Subtitle"]</label>
+                <input type="text" asp-for="Subtitle" class="form-control" id="subtitle" name="subtitle" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="text" class="form-label">@Localizer["MainText"]</label>
+                <textarea class="form-control-2" asp-for="Text" id="text" name="text" required></textarea>
+
+            </div>
+            <button type="submit" name="actionType" value="login" class="btn btn-primary">@Localizer["CreateArticle"]</button>
+
+        </form>
+
+        @* <form method="post" asp-controller="Admin" asp-action="RegistrationForm">
+
+            <button type="submit" name="actionType" value="registr" class="btn btn-primary-1">@Localizer["Registration"]</button>
+        </form> *@
+    </div>
+
+</div>

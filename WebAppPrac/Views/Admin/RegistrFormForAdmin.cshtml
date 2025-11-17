@@ -1,0 +1,31 @@
+﻿@using Microsoft.Extensions.Localization
+@using System.Text.Json
+@inject IStringLocalizer<Lang> Localizer
+
+
+<link rel="stylesheet" href="~/css/FormForAdmin.css" asp-append-version="true" />
+<title>@Localizer["AdminPanel"]</title>
+<div class="admin-wrapper">
+    <div class="admin-container">
+        <h2>@Localizer["Registration"]</h2>
+        <form method="post" asp-controller="Admin" asp-action="CreateAccount">
+            <div class="mb-3">
+                @* в этом инпуте сделать проверку на ввод только по почте *@
+                <label for="username" class="form-label">@Localizer["Login"]</label>
+                <input type="email" class="form-control" id="username" name="username" required />
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">@Localizer["Password"]</label>
+                <input type="password" class="form-control" id="password" name="password" required/>
+            </div>
+            <button type="submit" class="btn btn-primary">@Localizer["RegistrAccount"]</button>
+        </form>
+    </div>
+
+</div>
+
+@* @section Scripts {
+    <script src="~/js/form-validation.js" asp-append-version="true"></script>
+} *@
+
+

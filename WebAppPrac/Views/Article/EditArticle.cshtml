@@ -1,0 +1,48 @@
+﻿@using Microsoft.Extensions.Localization
+@model WebAppPrac.Models.Article
+@inject IStringLocalizer<Lang> Localizer
+
+<link rel="stylesheet" href="~/css/FormForAdmin.css" asp-append-version="true" />
+
+<title>@Localizer["EditArticle"]</title>
+
+<div class="admin-wrapper">
+    <div class="admin-container">
+        <h2>@Localizer["EditArticle"]</h2>
+
+        <form method="post" enctype="multipart/form-data" asp-controller="Article" asp-action="EditArticle">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label for="headline" class="form-label">@Localizer["Headline"]</label>
+                <input type="text" asp-for="Headline" class="form-control" id="headline" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">@Localizer["Image"]</label>
+                @if (Model.ImageData != null)
+                {
+                    var base64 = Convert.ToBase64String(Model.ImageData);
+                    <div class="current-image">
+                        <img src="data:image/jpeg;base64,@base64" alt="Current Image" class="preview-image" />
+                        <p>@Localizer["CurrentImage"] </p>
+                        <p>@Localizer["NewImage"] </p>
+                    </div>
+                }
+                <input type="file" class="form-control-1" id="image" accept="image/*" name="image" />
+            </div>
+
+            <div class="mb-3">
+                <label for="subtitle" class="form-label">@Localizer["Subtitle"]</label>
+                <input type="text" asp-for="Subtitle" class="form-control" id="subtitle" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="text" class="form-label">@Localizer["MainText"]</label>
+                <textarea asp-for="Text" class="form-control-2" id="text" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">@Localizer["SaveChanges"]</button>
+        </form>
+    </div>
+</div>

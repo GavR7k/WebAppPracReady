@@ -1,0 +1,247 @@
+﻿/* Центрирование формы */
+.admin-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* Контейнер формы */
+.admin-container {
+    background-color: #fff;
+    align-items: center;
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+}
+    /* Заголовок */
+    .admin-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+/* Поля формы */
+.form-label {
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-control-1 {
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.form-control-2 {
+    width: 100%;
+    height: 70px;
+    padding: 8px 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+/* Кнопка */
+.btn-primary {
+    width: 100%;
+    padding: 10px;
+    background-color: #444;
+    border: none;
+    font-size: 16px;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-primary:hover {
+        background-color: #ffcc00;
+    }
+
+.btn-primary-1 {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #444;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-primary-1:hover {
+        background-color: #ffcc00;
+    }
+
+.link-button {
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    line-height: normal;
+}
+
+.popup-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    opacity: 1;
+    animation: fadeOut 4s ease-in-out forwards;
+}
+
+    .popup-message.error {
+        background-color: #dc3545;
+        color: #fff;
+    }
+
+    .popup-message.success {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.article-preview {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+    .article-preview h3 {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .article-preview h6 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #666;
+    }
+
+    .article-preview p {
+        font-size: 16px;
+        color: #444;
+        line-height: 1.6;
+    }
+
+.preview-image {
+    display: block;
+    margin: 0 auto 15px auto;
+    max-width: 100%;
+    max-height: 400px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.article-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* ← вот ключевой параметр */
+    flex-wrap: wrap; /* если ширина маленькая — ссылки переносятся */
+}
+
+.but123 {
+    color: #444;
+    text-decoration: none;
+    font-size: 1.1rem;
+    background-color: #ffcc00;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+    .but123:hover {
+        background-color: #444;
+        color: #ffcc00;
+        border-radius: 4px;
+    }
+
+
+/*    ПАГИНАЦИЯ   */
+
+
+.pagination-wrapper {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+    gap: 5px;
+}
+
+.page-item {
+    display: inline-block;
+}
+
+.page-link {
+    display: block;
+    padding: 8px 14px;
+    background-color: #f0f0f0;
+    color: #444;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+    .page-link:hover {
+        background-color: #ffcc00;
+        color: #000;
+    }
+
+.page-item.active .page-link {
+    background-color: #444;
+    color: #fff;
+    border-color: #444;
+}
+
+.page-item.disabled .page-link {
+    background-color: #eaeaea;
+    color: #999;
+    cursor: not-allowed;
+}
