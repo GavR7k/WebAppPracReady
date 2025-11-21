@@ -3,5 +3,6 @@
     public interface ItranslationService
     {
         Task<string> TranslateAsync(string text, string sourceLang = "ru", string targetLang = "en");
+        Task<string[]> TranslateBatchAsync(string[] texts, string sourceLang = "ru", string targetLang = "en");
     }
 }

@@ -43,61 +43,33 @@ namespace WebAppPrac.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateArticle(Article model)
         {
-            #region
-            //использовние проверки на ввод симовлов языка
-
-            //bool isValid = currentLanguage switch
-            //{
-            //    "ru" => ContainsCyrillicLettersOnly(headline) &&
-            //    ContainsCyrillicLettersOnly(subtitle) &&
-            //    ContainsCyrillicLettersOnly(text),
-            //    "en" => ContainsLatinLettersOnly(headline) &&
-            //    ContainsLatinLettersOnly(subtitle) &&
-            //    ContainsLatinLettersOnly(text),
-            //    _ => false
-            //};
-            //if (!isValid)
-            //{
-            //    ViewBag.ArticleError = _localizer["UseCorrectFormOfLanguage"];
-            //    return View("FormForArticle");
-            //}
-            //else
-            //{
-            //    //создаем два объекта с новостями
-            //    throw new NotImplementedException();
-
-            //}
-            #endregion
-
-            //проверка какой текущий язык был установлен в Culture.Info
             var currentLanguage = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            var form = Request.Form;
+            var file = form.Files.GetFile("image");
+
+            model.Language = currentLanguage;
+            model.ImageData = await ConvertImageToBytes(file);
+
+            await _db.Articles.AddAsync(model);
+            await _db.SaveChangesAsync();
+
+            model.TranslationGroupId = model.Id;
+            _db.Articles.Update(model);
+            await _db.SaveChangesAsync();
 
             if (currentLanguage == "ru")
             {
-                var form = Request.Form;
-                var file = form.Files.GetFile("image");
-
-                //  model.TranslationGroupId = model.Id;
-                model.Language = currentLanguage;
-                model.ImageData = await ConvertImageToBytes(file);
-
-                await _db.Articles.AddAsync(model);
-                await _db.SaveChangesAsync();
-
-                model.TranslationGroupId = model.Id;
-                _db.Articles.Update(model);
-                await _db.SaveChangesAsync();
-
-                //создаем объект для англ версии
-                var translatedHeadline = await _translator.TranslateAsync(model.Headline);
-                var translatedSubtitle = await _translator.TranslateAsync(model.Subtitle);
-                var translatedText = await _translator.TranslateAsync(model.Text);
+                // пакетный перевод трёх полей
+                var translations = await _translator.TranslateBatchAsync(
+                    new[] { model.Headline, model.Subtitle, model.Text },
+                    "ru", "en"
+                );
 
                 Article enMode = new Article
                 {
-                    Headline = translatedHeadline,
-                    Subtitle = translatedSubtitle,
-                    Text = translatedText,
+                    Headline = translations[0],
+                    Subtitle = translations[1],
+                    Text = translations[2],
                     Language = "en",
                     TranslationGroupId = model.Id,
                     ImageData = model.ImageData
@@ -105,34 +77,19 @@ namespace WebAppPrac.Controllers
 
                 await _db.Articles.AddAsync(enMode);
                 await _db.SaveChangesAsync();
-                //отправляем в апи запрос на перевод нужных полей
-                //после получения создаем объект для англ версии
             }
-            if (currentLanguage == "en")
+            else if (currentLanguage == "en")
             {
-                var form = Request.Form;
-                var file = form.Files.GetFile("image");
-
-                model.Language = currentLanguage;
-                model.ImageData = await ConvertImageToBytes(file);
-
-                await _db.Articles.AddAsync(model);
-                await _db.SaveChangesAsync();
-
-                model.TranslationGroupId = model.Id;
-                _db.Articles.Update(model);
-                await _db.SaveChangesAsync();
-
-                // создаем русскую версию
-                var translatedHeadline = await _translator.TranslateAsync(model.Headline, "en", "ru");
-                var translatedSubtitle = await _translator.TranslateAsync(model.Subtitle, "en", "ru");
-                var translatedText = await _translator.TranslateAsync(model.Text, "en", "ru");
+                var translations = await _translator.TranslateBatchAsync(
+                    new[] { model.Headline, model.Subtitle, model.Text },
+                    "en", "ru"
+                );
 
                 Article ruMode = new Article
                 {
-                    Headline = translatedHeadline,
-                    Subtitle = translatedSubtitle,
-                    Text = translatedText,
+                    Headline = translations[0],
+                    Subtitle = translations[1],
+                    Text = translations[2],
                     Language = "ru",
                     TranslationGroupId = model.Id,
                     ImageData = model.ImageData
@@ -147,8 +104,8 @@ namespace WebAppPrac.Controllers
                 : "Article successfully added";
 
             return RedirectToAction("ShowMainPage", "MainPage");
-            //Написать функционал для создания новости
         }
+
 
         private async Task<byte[]> ConvertImageToBytes(IFormFile file)
         {
@@ -230,73 +187,68 @@ namespace WebAppPrac.Controllers
                     : "Article not found";
                 return RedirectToAction("ShowMainPage", "MainPage");
             }
+
             var groupId = article.TranslationGroupId;
-            //сделай тут еще проверку для обоих языков
-            if (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ru")
+            var currentLanguage = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+            // обновляем текущую версию
+            article.Headline = updatedArticle.Headline;
+            article.Subtitle = updatedArticle.Subtitle;
+            article.Text = updatedArticle.Text;
+
+            if (image != null)
             {
-                //найти из таблицы запись где TranslationgroupId = groupId и Language английский
-                var englishVersion = await _db.Articles.FirstOrDefaultAsync(x => x.TranslationGroupId == groupId && x.Language == "en");
+                using var memoryStream = new MemoryStream();
+                await image.CopyToAsync(memoryStream);
+                article.ImageData = memoryStream.ToArray();
+            }
 
-                article.Headline = updatedArticle.Headline;
-                article.Subtitle = updatedArticle.Subtitle;
-                article.Text = updatedArticle.Text;
+            if (currentLanguage == "ru")
+            {
+                // найти английскую версию
+                var englishVersion = await _db.Articles
+                    .FirstOrDefaultAsync(x => x.TranslationGroupId == groupId && x.Language == "en");
 
-                if (image != null)
-                {
-                    using var memoryStream = new MemoryStream();
-                    await image.CopyToAsync(memoryStream);
-                    article.ImageData = memoryStream.ToArray();
-                }
+                // пакетный перевод
+                var translations = await _translator.TranslateBatchAsync(
+                    new[] { article.Headline, article.Subtitle, article.Text },
+                    "ru", "en"
+                );
 
-                englishVersion.Headline = await _translator.TranslateAsync(article.Headline);
-                englishVersion.Subtitle = await _translator.TranslateAsync(article.Subtitle);
-                englishVersion.Text = await _translator.TranslateAsync(article.Text);
+                englishVersion.Headline = translations[0];
+                englishVersion.Subtitle = translations[1];
+                englishVersion.Text = translations[2];
                 englishVersion.ImageData = article.ImageData;
 
-
-                List<Article> list = new List<Article>()
-                {
-                    article,englishVersion
-                };
-                _db.Articles.UpdateRange(list);
-
+                _db.Articles.UpdateRange(article, englishVersion);
             }
-            if (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "en")
+            else if (currentLanguage == "en")
             {
-                var russianVersion = await _db.Articles.FirstOrDefaultAsync(x => x.TranslationGroupId == groupId && x.Language == "ru");
+                // найти русскую версию
+                var russianVersion = await _db.Articles
+                    .FirstOrDefaultAsync(x => x.TranslationGroupId == groupId && x.Language == "ru");
 
-                article.Headline = updatedArticle.Headline;
-                article.Subtitle = updatedArticle.Subtitle;
-                article.Text = updatedArticle.Text;
+                var translations = await _translator.TranslateBatchAsync(
+                    new[] { article.Headline, article.Subtitle, article.Text },
+                    "en", "ru"
+                );
 
-                if (image != null)
-                {
-                    using var memoryStream = new MemoryStream();
-                    await image.CopyToAsync(memoryStream);
-                    article.ImageData = memoryStream.ToArray();
-                }
-
-                russianVersion.Headline = await _translator.TranslateAsync(article.Headline, "en", "ru");
-                russianVersion.Subtitle = await _translator.TranslateAsync(article.Subtitle, "en", "ru");
-                russianVersion.Text = await _translator.TranslateAsync(article.Text, "en", "ru");
+                russianVersion.Headline = translations[0];
+                russianVersion.Subtitle = translations[1];
+                russianVersion.Text = translations[2];
                 russianVersion.ImageData = article.ImageData;
 
-
-                List<Article> list = new List<Article>()
-                {
-                    article,russianVersion
-                };
-                _db.Articles.UpdateRange(list);
+                _db.Articles.UpdateRange(article, russianVersion);
             }
+
             await _db.SaveChangesAsync();
 
-            TempData["ArticleSuccessMessage"] = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ru"
+            TempData["ArticleSuccessMessage"] = currentLanguage == "ru"
                 ? "Запись успешно обновлена"
                 : "Article successfully updated";
 
             return RedirectToAction("ShowMainPage", "MainPage");
         }
-
 
     }
 }

@@ -35,9 +35,8 @@ builder.Services.AddControllersWithViews()
     .AddDataAnnotationsLocalization();
 
 //регистрация сервиса для для перевода 
-builder.Services.AddHttpClient<ItranslationService, LibreTranslateService>(client => {
-
-    client.BaseAddress = new Uri("http://localhost:5000");
+builder.Services.AddHttpClient<ItranslationService, LingvaTranslateService>(client => {
+    client.BaseAddress = new Uri("https://lingva.ml");
 });
 
 var app = builder.Build();
